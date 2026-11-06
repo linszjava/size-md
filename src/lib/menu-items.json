@@ -1,0 +1,374 @@
+[
+  {
+    "label": "段落",
+    "children": [
+      {
+        "id": "ed:heading-1",
+        "label": "一级标题",
+        "key": "CmdOrCtrl+1",
+        "gate": "rich",
+        "check": true
+      },
+      {
+        "id": "ed:heading-2",
+        "label": "二级标题",
+        "key": "CmdOrCtrl+2",
+        "gate": "rich",
+        "check": true
+      },
+      {
+        "id": "ed:heading-3",
+        "label": "三级标题",
+        "key": "CmdOrCtrl+3",
+        "gate": "rich",
+        "check": true
+      },
+      {
+        "id": "ed:heading-4",
+        "label": "四级标题",
+        "key": "CmdOrCtrl+4",
+        "gate": "rich",
+        "check": true
+      },
+      {
+        "id": "ed:heading-5",
+        "label": "五级标题",
+        "key": "CmdOrCtrl+5",
+        "gate": "rich",
+        "check": true
+      },
+      {
+        "id": "ed:heading-6",
+        "label": "六级标题",
+        "key": "CmdOrCtrl+6",
+        "gate": "rich",
+        "check": true
+      },
+      {
+        "separator": true
+      },
+      {
+        "id": "ed:heading-0",
+        "label": "段落",
+        "key": "CmdOrCtrl+0",
+        "gate": "rich",
+        "check": true
+      },
+      {
+        "separator": true
+      },
+      {
+        "id": "ed:heading-up",
+        "label": "提升标题级别",
+        "gate": "rich"
+      },
+      {
+        "id": "ed:heading-down",
+        "label": "降低标题级别",
+        "gate": "rich"
+      },
+      {
+        "separator": true
+      },
+      {
+        "label": "表格",
+        "children": [
+          {
+            "id": "ed:table",
+            "label": "插入表格…",
+            "gate": "rich"
+          },
+          {
+            "separator": true
+          },
+          {
+            "id": "ed:row-before",
+            "label": "在上方插入行",
+            "gate": "table"
+          },
+          {
+            "id": "ed:row-after",
+            "label": "在下方插入行",
+            "gate": "table"
+          },
+          {
+            "id": "ed:col-before",
+            "label": "在左侧插入列",
+            "gate": "table"
+          },
+          {
+            "id": "ed:col-after",
+            "label": "在右侧插入列",
+            "gate": "table"
+          },
+          {
+            "id": "ed:delete-row",
+            "label": "删除当前行",
+            "gate": "table"
+          },
+          {
+            "id": "ed:delete-col",
+            "label": "删除当前列",
+            "gate": "table"
+          },
+          {
+            "id": "ed:delete-table",
+            "label": "删除表格",
+            "gate": "table"
+          },
+          {
+            "separator": true
+          },
+          {
+            "id": "ed:align-left",
+            "label": "列左对齐",
+            "gate": "table"
+          },
+          {
+            "id": "ed:align-center",
+            "label": "列居中",
+            "gate": "table"
+          },
+          {
+            "id": "ed:align-right",
+            "label": "列右对齐",
+            "gate": "table"
+          }
+        ]
+      },
+      {
+        "id": "ed:code-block",
+        "label": "代码块",
+        "key": "CmdOrCtrl+Alt+C",
+        "gate": "rich"
+      },
+      {
+        "id": "ed:quote",
+        "label": "引用",
+        "key": "CmdOrCtrl+Alt+Q",
+        "gate": "rich"
+      },
+      {
+        "id": "ed:unquote",
+        "label": "取消引用 / 提升段落",
+        "gate": "rich"
+      },
+      {
+        "separator": true
+      },
+      {
+        "id": "ed:ordered",
+        "label": "有序列表",
+        "key": "CmdOrCtrl+Alt+O",
+        "gate": "rich"
+      },
+      {
+        "id": "ed:bullet",
+        "label": "无序列表",
+        "key": "CmdOrCtrl+Alt+U",
+        "gate": "rich"
+      },
+      {
+        "id": "ed:task",
+        "label": "任务列表",
+        "key": "CmdOrCtrl+Alt+X",
+        "gate": "rich"
+      },
+      {
+        "label": "任务状态",
+        "children": [
+          {
+            "id": "ed:task-done",
+            "label": "标记为已完成",
+            "gate": "task",
+            "check": true
+          },
+          {
+            "id": "ed:task-undone",
+            "label": "标记为未完成",
+            "gate": "task",
+            "check": true
+          }
+        ]
+      },
+      {
+        "label": "列表缩进",
+        "children": [
+          {
+            "id": "ed:indent",
+            "label": "增加缩进",
+            "key": "CmdOrCtrl+BracketRight",
+            "gate": "list"
+          },
+          {
+            "id": "ed:outdent",
+            "label": "减少缩进",
+            "key": "CmdOrCtrl+BracketLeft",
+            "gate": "list"
+          }
+        ]
+      },
+      {
+        "separator": true
+      },
+      {
+        "id": "ed:paragraph-before",
+        "label": "在上方插入段落",
+        "gate": "rich"
+      },
+      {
+        "id": "ed:paragraph-after",
+        "label": "在下方插入段落",
+        "gate": "rich"
+      },
+      {
+        "id": "ed:hr",
+        "label": "水平分割线",
+        "key": "CmdOrCtrl+Alt+Minus",
+        "gate": "rich"
+      },
+      {
+        "separator": true
+      },
+      {
+        "id": "unsupported:math",
+        "label": "公式块（暂不支持）",
+        "gate": "unsupported"
+      },
+      {
+        "id": "unsupported:footnote",
+        "label": "脚注（暂不支持）",
+        "gate": "unsupported"
+      },
+      {
+        "id": "unsupported:toc",
+        "label": "内容目录（暂不支持）",
+        "gate": "unsupported"
+      },
+      {
+        "id": "unsupported:yaml",
+        "label": "YAML Front Matter（暂不支持）",
+        "gate": "unsupported"
+      }
+    ]
+  },
+  {
+    "label": "格式",
+    "children": [
+      {
+        "id": "ed:bold",
+        "label": "加粗",
+        "key": "CmdOrCtrl+B",
+        "gate": "rich",
+        "check": true
+      },
+      {
+        "id": "ed:italic",
+        "label": "斜体",
+        "key": "CmdOrCtrl+I",
+        "gate": "rich",
+        "check": true
+      },
+      {
+        "id": "ed:strike",
+        "label": "删除线",
+        "key": "CmdOrCtrl+Shift+X",
+        "gate": "rich",
+        "check": true
+      },
+      {
+        "id": "ed:code",
+        "label": "行内代码",
+        "key": "CmdOrCtrl+E",
+        "gate": "rich",
+        "check": true
+      },
+      {
+        "separator": true
+      },
+      {
+        "id": "link-dialog",
+        "label": "超链接…",
+        "key": "CmdOrCtrl+K",
+        "gate": "rich"
+      },
+      {
+        "id": "ed:unlink",
+        "label": "移除链接",
+        "gate": "rich"
+      },
+      {
+        "id": "insert-image",
+        "label": "图片…",
+        "key": "CmdOrCtrl+Shift+I",
+        "gate": "rich"
+      },
+      {
+        "separator": true
+      },
+      {
+        "id": "ed:clear",
+        "label": "清除文字格式",
+        "gate": "rich"
+      }
+    ]
+  },
+  {
+    "label": "显示",
+    "children": [
+      {
+        "id": "toggle-source",
+        "label": "源代码模式",
+        "key": "CmdOrCtrl+Slash",
+        "check": true
+      },
+      {
+        "id": "toggle-sidebar",
+        "label": "隐藏侧栏",
+        "key": "CmdOrCtrl+Shift+L",
+        "check": true
+      },
+      {
+        "id": "show-articles",
+        "label": "我的文章"
+      },
+      {
+        "id": "show-outline",
+        "label": "大纲"
+      },
+      {
+        "id": "toggle-preview",
+        "label": "公众号预览",
+        "check": true
+      },
+      {
+        "separator": true
+      },
+      {
+        "id": "typewriter",
+        "label": "打字机模式",
+        "check": true
+      },
+      {
+        "id": "fullscreen",
+        "label": "切换全屏",
+        "key": "Ctrl+Super+F"
+      },
+      {
+        "separator": true
+      },
+      {
+        "id": "font-larger",
+        "label": "增大正文字号"
+      },
+      {
+        "id": "font-smaller",
+        "label": "减小正文字号"
+      },
+      {
+        "id": "font-reset",
+        "label": "恢复正文字号"
+      }
+    ]
+  }
+]

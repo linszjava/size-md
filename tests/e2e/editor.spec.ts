@@ -1,0 +1,195 @@
+import { test, expect } from '@playwright/test';
+
+test('live editing, themes, source, save and clipboard retain the article', async ({ page, context }) => {
+  const errors: string[] = []; page.on('pageerror', e => errors.push(e.message));
+  await context.grantPermissions(['clipboard-read', 'clipboard-write']);
+  await page.goto('/');
+  const editor = page.locator('.ProseMirror');
+  await expect(editor).toBeVisible();
+  await expect(editor.locator('h1')).toContainText('把想法写下来');
+  await expect(editor.locator('pre .hljs-keyword').first()).toHaveCSS('color', 'rgb(119, 0, 136)');
+  await page.screenshot({ path: 'test-results/editor-desktop.png', fullPage: true });
+  await page.locator('.web-files summary').click();
+  await page.getByRole('button', { name: '新建文章' }).click();
+  await expect(editor.locator('h1')).toHaveText('无标题');
+  await editor.click(); await page.keyboard.press('Meta+a'); await page.keyboard.press('Backspace');
+  await page.keyboard.type('## ');
+  await page.keyboard.insertText('即时标题');
+  await expect(editor.locator('h2')).toContainText('即时标题');
+  await page.locator('.web-settings:not(.web-files):not(.web-editing) summary').click();
+  await page.getByRole('menuitemradio', { name: 'Gothic', exact: true }).click();
+  await page.locator('.web-settings:not(.web-files):not(.web-editing) summary').click();
+  await page.getByRole('button', { name: '公众号预览', exact: true }).click();
+  await expect(page.getByTestId('wechat-preview').locator('h2')).toHaveCSS('color', 'rgb(17, 17, 17)');
+  await page.getByRole('button', { name: 'Markdown', exact: true }).click();
+  await expect(page.locator('.cm-content')).toContainText('## 即时标题');
+  await page.getByRole('button', { name: '即时编辑' }).click();
+  await expect(editor.locator('h2')).toContainText('即时标题');
+  await page.locator('.web-files summary').click();
+  await page.getByRole('button', { name: '复制公众号排版' }).click();
+  await expect(page.getByRole('status')).toContainText('公众号排版已复制');
+  const copied = await page.evaluate(async () => { const items = await navigator.clipboard.read(); return (await items[0].getType('text/html')).text(); });
+  expect(copied).toContain('即时标题'); expect(copied).toContain('style=');
+  await expect(page.getByText('草稿已保存')).toBeVisible();
+  const download = page.waitForEvent('download'); await page.getByRole('button', { name: '保存', exact: true }).click();
+  expect((await download).suggestedFilename()).toBe('无标题文章.md');
+  await page.reload();
+  await expect(editor.locator('h2')).toContainText('即时标题');
+  expect(errors).toEqual([]);
+});
+
+test('theme import is shared with export and unsupported source is preserved', async ({ page }) => {
+  await page.goto('/');
+  await page.locator('.web-settings:not(.web-files):not(.web-editing) summary').click();
+  await page.locator('input[accept=".css"]').setInputFiles({ name: 'my-theme.css', mimeType: 'text/css', buffer: Buffer.from('#write h2 { color: #123456; } #write p {line-height: 2;}') });
+  await expect(page.locator('.ProseMirror h2').first()).toHaveCSS('color', 'rgb(18, 52, 86)');
+  await page.getByRole('button', { name: '公众号预览', exact: true }).click();
+  await expect(page.getByTestId('wechat-preview').locator('h2').first()).toHaveCSS('color', 'rgb(18, 52, 86)');
+  const original = '---\ntitle: 保留元数据\n---\n\n# 原文\n\n<div>自定义 HTML</div>\n';
+  await page.locator('input[accept=".md,.markdown,.txt"]').setInputFiles({ name: 'original.md', mimeType: 'text/markdown', buffer: Buffer.from(original) });
+  await expect(page.locator('.cm-content')).toContainText('保留元数据');
+  await page.getByRole('button', { name: '即时编辑' }).click();
+  await expect(page.getByRole('status')).toContainText('暂时保留源码编辑');
+  await expect(page.getByText('草稿已保存')).toBeVisible();
+  const saved = await page.evaluate(() => JSON.parse(localStorage.getItem('size-md-drafts-v1')!)[0].markdown);
+  expect(saved).toBe(original);
+});
+
+test('failed uploads remain visible, can be removed, and never persist image bytes', async ({ page }) => {
+  await page.goto('/'); await expect(page.locator('.ProseMirror')).toBeVisible();
+  await page.locator('input[type=file][accept^="image/"]').setInputFiles({ name: 'test.png', mimeType: 'image/png', buffer: Buffer.from('iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mP8/x8AAusB9Y9Zl1sAAAAASUVORK5CYII=', 'base64') });
+  await expect(page.getByLabel('图片上传队列')).toContainText('需要 Mac 桌面版');
+  await page.locator('.web-files summary').click();
+  await expect(page.getByRole('button', { name: '复制公众号排版' })).toBeDisabled();
+  await expect(page.getByText('草稿已保存')).toBeVisible();
+  expect(await page.evaluate(() => localStorage.getItem('size-md-drafts-v1'))).not.toMatch(/data:image|blob:/);
+  await page.getByTitle('移除上传任务').click();
+  await expect(page.getByRole('button', { name: '复制公众号排版' })).toBeEnabled();
+});
+
+test('settings themes and imported library persist across reloads', async ({ page }) => {
+  await page.goto('/');
+  await page.locator('.web-settings:not(.web-files):not(.web-editing) summary').click();
+  await page.getByRole('menuitemradio', { name: 'GitHub', exact: true }).click();
+  await expect(page.getByText('草稿已保存')).toBeVisible();
+  await page.reload();
+  await page.locator('.web-settings:not(.web-files):not(.web-editing) summary').click();
+  await expect(page.getByRole('menuitemradio', { name: 'GitHub', exact: true })).toHaveAttribute('aria-checked', 'true');
+  await page.locator('input[accept=".css"]').setInputFiles({ name: 'retained.css', mimeType: 'text/css', buffer: Buffer.from('#write h2 { color: #123456; }') });
+  await expect(page.locator('.ProseMirror h2').first()).toHaveCSS('color', 'rgb(18, 52, 86)');
+  await page.getByRole('menuitemradio', { name: 'Newsprint', exact: true }).click();
+  await expect(page.getByText('草稿已保存')).toBeVisible();
+  await page.reload();
+  await page.locator('.web-settings:not(.web-files):not(.web-editing) summary').click();
+  await expect(page.getByRole('menuitemradio', { name: 'Newsprint', exact: true })).toHaveAttribute('aria-checked', 'true');
+  await page.getByRole('menuitemradio', { name: 'retained', exact: true }).click();
+  await expect(page.locator('.ProseMirror h2').first()).toHaveCSS('color', 'rgb(18, 52, 86)');
+  await expect(page.getByRole('button', { name: '排版', exact: true })).toHaveCount(0);
+});
+
+test('pane dividers resize, persist, and reset', async ({ page }) => {
+  await page.goto('/');
+  const sidebar = page.getByRole('separator', { name: '调整侧栏宽度' });
+  const before = await page.locator('.sidebar').boundingBox();
+  const handle = (await sidebar.boundingBox())!;
+  await page.mouse.move(handle.x, handle.y + 200); await page.mouse.down();
+  await page.mouse.move(handle.x + 80, handle.y + 200); await page.mouse.up();
+  await expect(sidebar).toHaveAttribute('aria-valuenow', String(before!.width + 80));
+  await expect.poll(() => page.evaluate(() => localStorage.getItem('size-md-sidebar-width'))).toBe(String(before!.width + 80));
+  await page.reload();
+  await expect(sidebar).toHaveAttribute('aria-valuenow', String(before!.width + 80));
+  await sidebar.dblclick(); await expect(sidebar).toHaveAttribute('aria-valuenow', '220');
+  await page.getByRole('button', { name: '公众号预览', exact: true }).click();
+  const preview = page.getByRole('separator', { name: '调整公众号预览宽度' });
+  const initial = Number(await preview.getAttribute('aria-valuenow'));
+  const right = (await preview.boundingBox())!;
+  await page.mouse.move(right.x, right.y + 200); await page.mouse.down();
+  await page.mouse.move(right.x - 40, right.y + 200); await page.mouse.up();
+  await expect(preview).toHaveAttribute('aria-valuenow', String(initial + 40));
+  await preview.focus(); await page.keyboard.press('ArrowRight');
+  await expect(preview).toHaveAttribute('aria-valuenow', String(initial + 30));
+});
+
+test('document title opens rename popover and saves the chosen filename', async ({ page }) => {
+  await page.goto('/');
+  const title = page.getByRole('button', { name: '文件名称与位置' });
+  await title.click();
+  const dialog = page.getByRole('dialog', { name: '文件名称与位置' });
+  await dialog.getByLabel('文章名称').fill('标题测试');
+  await dialog.getByRole('button', { name: '完成' }).click();
+  await expect(title).toContainText('标题测试');
+  const download = page.waitForEvent('download');
+  await page.locator('.web-files summary').click();
+  await page.getByRole('button', { name: '保存', exact: true }).click();
+  expect((await download).suggestedFilename()).toBe('标题测试.md');
+  await title.click();
+  await dialog.getByLabel('文章名称').fill('不应提交');
+  await dialog.getByLabel('文章名称').press('Escape');
+  await expect(title).toContainText('标题测试');
+});
+
+test('paragraph and format menus edit the selection and retain undo history', async ({ page }) => {
+  await page.goto('/');
+  await page.locator('.web-files summary').click();
+  await page.getByRole('button', {name:'新建文章',exact:true}).click();
+  const editor = page.locator('.ProseMirror');
+  await editor.click();
+  await page.locator('.web-editing > summary').click();
+  const menu = page.locator('.web-editing');
+  await menu.locator('summary').filter({hasText:/^段落$/}).click();
+  await menu.getByRole('button',{name:'二级标题',exact:true}).click();
+  await expect(editor.locator('h2')).toHaveText('无标题');
+  await page.keyboard.press('Meta+a');
+  await menu.locator('summary').filter({hasText:/^格式$/}).click();
+  await menu.getByRole('button',{name:'加粗',exact:true}).click();
+  await expect(editor.locator('h2 strong')).toHaveText('无标题');
+  await menu.locator('details > summary').filter({hasText:/^编辑$/}).click();
+  await menu.getByRole('button',{name:'撤销',exact:true}).click();
+  await expect(editor.locator('strong')).toHaveCount(0);
+  await expect(editor.locator('h2')).toHaveText('无标题');
+  await menu.getByRole('button',{name:'重做',exact:true}).click();
+  await expect(editor.locator('h2 strong')).toHaveText('无标题');
+});
+
+test('table menu inserts and edits actual table structure', async ({ page }) => {
+  await page.goto('/');
+  await page.locator('.web-files summary').click();
+  await page.getByRole('button',{name:'新建文章',exact:true}).click();
+  await page.locator('.ProseMirror').click();
+  await page.keyboard.press('End'); await page.keyboard.press('Enter');
+  await page.locator('.web-editing > summary').click();
+  const menu = page.locator('.web-editing');
+  await menu.locator('summary').filter({hasText:/^段落$/}).click();
+  await menu.locator('summary').filter({hasText:/^表格$/}).click();
+  await menu.getByRole('button',{name:'插入表格…',exact:true}).click();
+  await page.getByRole('dialog', {name:'插入表格'}).getByRole('button',{name:'插入',exact:true}).click();
+  await page.locator('.web-editing > summary').click();
+  await menu.locator('summary').filter({hasText:/^段落$/}).click();
+  await menu.locator('summary').filter({hasText:/^表格$/}).click();
+  const table = page.locator('.ProseMirror table');
+  await expect(table.locator('tr')).toHaveCount(3);
+  await table.locator('td').first().click();
+  await menu.getByRole('button',{name:'在下方插入行',exact:true}).click();
+  await expect(table.locator('tr')).toHaveCount(4);
+  await menu.getByRole('button',{name:'在右侧插入列',exact:true}).click();
+  await expect(table.locator('tr').last().locator('td')).toHaveCount(4);
+});
+
+test('find and replace preserve rich formatting and source-only syntax', async ({ page }) => {
+  await page.goto('/');
+  await page.locator('.web-editing > summary').click();
+  const menu = page.locator('.web-editing');
+  await menu.locator('details > summary').filter({hasText:/^编辑$/}).click();
+  await menu.getByRole('button',{name:'查找并替换…',exact:true}).click();
+  await page.getByLabel('查找内容').fill('让表达自然发生');
+  await page.getByLabel('替换内容').fill('标题已替换');
+  await page.getByRole('button',{name:'全部替换',exact:true}).click();
+  await expect(page.locator('.ProseMirror h1')).toContainText('标题已替换');
+  await page.getByRole('button',{name:'关闭查找'}).click();
+  await page.getByRole('button',{name:'Markdown',exact:true}).click();
+  await menu.getByRole('button',{name:'查找并替换…',exact:true}).click();
+  await page.getByLabel('查找内容').fill('标题已替换');
+  await page.getByLabel('替换内容').fill('源码替换成功');
+  await page.getByRole('button',{name:'全部替换',exact:true}).click();
+  await expect(page.locator('.cm-content')).toContainText('源码替换成功');
+});

@@ -1,0 +1,174 @@
+/* Settings controls are scoped so document themes cannot change their layout. */
+.preferences {
+  border: 1px solid #00000016;
+  border-radius: 12px;
+  box-shadow: 0 22px 70px #00000028, 0 2px 8px #00000010;
+}
+.preferences > header { padding: 12px 18px; }
+.preferences .preferences-content { padding: 22px 28px 28px; }
+.preferences .preferences-content label { font-size: 12px; color: #555; }
+.preferences .preferences-content .preference-row {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: center;
+  gap: 20px;
+  min-height: 34px;
+  margin: 8px 0;
+}
+.preferences input:not([type=checkbox]):not([type=range]),
+.preferences select {
+  box-sizing: border-box;
+  height: 32px;
+  min-height: 32px;
+  margin: 0;
+  padding: 5px 10px;
+  border: 1px solid #00000022;
+  border-radius: 6px;
+  background-color: #fff;
+  color: #333;
+  font: inherit;
+  font-size: 12px;
+  line-height: 20px;
+  box-shadow: inset 0 1px 2px #00000004;
+  outline: none;
+  transition: border-color .12s, box-shadow .12s;
+}
+.preferences input::placeholder { color: #a2a2a2; }
+.preferences select {
+  -webkit-appearance: none;
+  appearance: none;
+  padding-right: 30px;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='16' viewBox='0 0 12 16'%3E%3Cpath d='m3 6 3-3 3 3M3 10l3 3 3-3' fill='none' stroke='%236d6d6d' stroke-width='1.4' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E"), linear-gradient(#fff, #f8f8f8);
+  background-position: right 10px center, center;
+  background-repeat: no-repeat;
+  box-shadow: 0 1px 2px #00000008;
+  cursor: pointer;
+}
+.preferences .preference-row select { width: 65%; flex-shrink: 0; }
+.preferences select:hover:not(:disabled) { border-color: #00000038; }
+.preferences input:not([type=checkbox]):focus,
+.preferences select:focus-visible {
+  border-color: #6a99d3;
+  box-shadow: 0 0 0 3px #6a99d32b;
+}
+.preferences input:disabled,
+.preferences select:disabled { color: #aaa; background-color: #f4f4f4; box-shadow: none; cursor: default; }
+.preferences .preferences-search {
+  padding: 0 9px;
+  background: #eaeaea;
+  border: 1px solid transparent;
+  border-radius: 7px;
+  margin-bottom: 14px;
+}
+.preferences .preferences-search input {
+  padding: 4px 0;
+  height: 30px;
+  min-height: 30px;
+  background: transparent;
+  border: 0;
+  box-shadow: none;
+}
+.preferences .preferences-search:focus-within { border-color: #6a99d3; box-shadow: 0 0 0 3px #6a99d322; }
+.preferences .preferences-search input:focus { box-shadow: none; }
+.preferences .preference-check input[type=checkbox] {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 15px;
+  height: 15px;
+  min-height: 15px;
+  border: 1px solid #00000035;
+  border-radius: 4px;
+  background: linear-gradient(#fff, #fafafa);
+  box-shadow: 0 1px 1px #00000006;
+  cursor: pointer;
+}
+.preferences .preference-check input:checked {
+  border-color: #527ba9;
+  background: #5a83b2 url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 14 14'%3E%3Cpath d='m3 7 2.5 2.5L11 4' fill='none' stroke='white' stroke-width='1.8' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E") center/13px no-repeat;
+}
+.preferences .preference-check input:disabled { opacity: .45; cursor: default; }
+.preferences .preference-check input:focus-visible { outline: 3px solid #6a99d344; outline-offset: 2px; }
+.preferences .preferences-content form > label,
+.preferences .form-row > label { gap: 6px; margin-bottom: 14px; }
+.preferences .form-row { gap: 14px; }
+.preferences .settings-note { padding: 0; margin: 6px 0 18px; background: transparent; color: #999; font-size: 11px; line-height: 1.7; }
+.preferences .save-config,
+.preferences .preferences-content > .button {
+  width: auto;
+  min-width: 86px;
+  min-height: 30px;
+  padding: 5px 14px;
+  border: 1px solid #00000025;
+  border-radius: 6px;
+  background: linear-gradient(#fff, #f7f7f7);
+  color: #333;
+  font-size: 12px;
+  box-shadow: 0 1px 2px #0000000a;
+}
+.preferences .save-config { display: flex; margin: 0 0 0 auto; }
+.preferences .save-config:hover:not(:disabled) { background: #f0f0f0; }
+@media (max-width: 600px) {
+  .preferences .preferences-content { padding: 18px 16px; }
+  .preferences .preferences-content .preference-row { gap: 10px; }
+  .preferences .preference-row select { width: 62%; }
+}
+.preferences .preferences-search input:not([type=checkbox]):not([type=range]),
+.preferences .preferences-search input:not([type=checkbox]):not([type=range]):focus {
+  height: 30px;
+  min-height: 30px;
+  padding: 4px 0;
+  border: 0;
+  background: transparent;
+  box-shadow: none;
+}
+
+/* Compact custom choices; no operating-system select popup. */
+.preferences { width: 720px; }
+.preferences .preferences-nav { width: 152px; }
+.preferences .preferences-content .preference-row { justify-content: flex-start; gap: 18px; }
+.preferences .preference-row > .choice-select { width: 260px; margin-left: auto; flex-shrink: 0; }
+.choice-select { display: block; width: 100%; min-width: 0; }
+.preferences .choice-trigger {
+  width: 100%; height: 32px; justify-content: space-between; gap: 10px;
+  padding: 5px 10px; border: 1px solid #00000022; border-radius: 6px;
+  background: linear-gradient(#fff, #f8f8f8); color: #333; font-size: 12px;
+  box-shadow: 0 1px 2px #00000008; text-align: left;
+}
+.choice-trigger > span { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.choice-trigger svg { color: #888; }
+.preferences .choice-trigger:hover:not(:disabled) { background: #f3f3f3; border-color: #00000035; }
+.preferences .choice-trigger:focus-visible, .preferences .choice-trigger[aria-expanded=true] { outline: none; border-color: #839bb7; box-shadow: 0 0 0 3px #6a99d322; }
+.preferences form > label:has(.choice-select) .choice-select { width: 220px; }
+.choice-menu {
+  position: fixed; z-index: 100; padding: 4px; max-height: 260px; overflow-y: auto;
+  border: 1px solid #d8d8d8; border-radius: 8px; background: #fdfdfd; color: #333;
+  box-shadow: 0 8px 24px #00000020, 0 2px 5px #0000000a;
+  font: 12px -apple-system, BlinkMacSystemFont, 'PingFang SC', sans-serif;
+}
+.choice-menu [role=option] { display: flex; align-items: center; gap: 8px; min-height: 30px; padding: 5px 8px; border-radius: 4px; cursor: default; }
+.choice-menu [role=option].active { background: #eaeaea; }
+.choice-menu [role=option] svg { flex-shrink: 0; color: #555; }
+@media(max-width:600px) { .preferences .preference-row > .choice-select { width: 65%; } }
+.local-directory-row { display: flex; align-items: center; gap: 8px; }
+.local-directory-row input { flex: 1; min-width: 0; }
+.local-directory-row .button { flex-shrink: 0; height: 32px; padding: 5px 10px; font-size: 12px; }
+/* macOS-style close control: generous hit target around the small red dot. */
+.preferences > header { position:relative; height:44px; min-height:44px; padding:0 16px; justify-content:center; background:#f7f7f7; }
+.preferences > header h2 { font-size:13px; font-weight:600; color:#555; }
+.preferences > header .mac-close-button { position:absolute; left:10px; top:8px; width:28px; height:28px; padding:0; border:0; border-radius:6px; background:transparent; box-shadow:none; display:grid; place-items:center; }
+.mac-close-button > span { display:grid; place-items:center; width:12px; height:12px; border:1px solid #e0443e; border-radius:50%; background:#ff5f57; box-shadow:inset 0 .5px 0 #ffffff30; }
+.mac-close-button svg { color:#7d201b; opacity:0; }
+.mac-close-button:hover svg,.mac-close-button:focus-visible svg { opacity:1; }
+.preferences > header .mac-close-button:hover { background:transparent; }
+.mac-close-button:active > span { background:#e34b44; }
+.preferences > header .mac-close-button:focus-visible { outline:2px solid #8caed6; outline-offset:1px; }
+.preferences > header .mac-window-controls { position:absolute; left:10px; top:8px; display:flex; align-items:center; gap:0; }
+.preferences > header .mac-window-controls .mac-close-button { position:static; }
+.preferences > header .mac-inactive-button { display:grid; place-items:center; width:20px; min-width:20px; height:28px; padding:0; border:0; background:transparent; box-shadow:none; opacity:1; cursor:default; }
+.mac-inactive-button > span { width:12px; height:12px; border:1px solid #c6c6c6; border-radius:50%; background:#d5d5d5; }
+.theme-management-actions{display:flex;gap:10px;flex-wrap:wrap;margin:18px 0}
+
+.preferences .theme-management-actions .button { min-height:32px; padding:5px 14px; border:1px solid #d0d0d0; border-radius:6px; background:linear-gradient(#fff,#f6f6f6); box-shadow:0 1px 2px #0000000a; font-size:12px; color:#444; }
+.preferences .theme-management-actions .button:hover:not(:disabled) { background:#ededed; border-color:#bdbdbd; }
+.preferences .theme-management-actions .button:active:not(:disabled) { background:#e4e4e4; box-shadow:inset 0 1px 2px #0000000a; }
